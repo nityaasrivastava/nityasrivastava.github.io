@@ -4,32 +4,47 @@
     <meta charset="UTF-8">
     <title>Aerobatic Aircraft Design - Weight Estimation</title>
 
-    <!-- MathJax for equations -->
+    <!-- MathJax -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-    <!-- Simple styling (makes it look clean) -->
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 40px;
             line-height: 1.6;
+            background: #f4f6f8;
         }
+
         h1, h2 {
             color: #2c3e50;
         }
-        p {
-            font-size: 16px;
+
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+
+        th {
+            background-color: #0b3d91;
+            color: white;
+        }
+
+        td, th {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 
 <body>
 
-<h1> Aerobatic Aircraft Design</h1>
+<h1>✈️ Aerobatic Aircraft Design</h1>
 
 <hr>
 
-<h2> Weight Estimation</h2>
+<h2>⚖️ Weight Estimation</h2>
 
 <p>
 1. Although MTOW (Maximum Takeoff Weight) is the absolute upper limit of the weight the aircraft can sustain, 
@@ -42,17 +57,11 @@ it increases aircraft weight and reduces maneuverability, thereby affecting perf
 
 <hr>
 
-<h2>Design Equation</h2>
+<h2>📐 Design Equation</h2>
 
 <p>
 $$
 W_0 = W_{crew} + W_{payload} + \left(\frac{W_f}{W_0}\right)W_0 + \left(\frac{W_e}{W_0}\right)W_0
-$$
-</p>
-
-<p>
-$$
-W_0 - \left(\frac{W_f}{W_0}\right)W_0 - \left(\frac{W_e}{W_0}\right)W_0 = W_{crew} + W_{payload}
 $$
 </p>
 
@@ -64,45 +73,15 @@ $$
 
 <hr>
 
-<h2> Definitions</h2>
-
-<ul>
-    <li><b>W₀</b>: Design takeoff gross weight</li>
-    <li><b>Wcrew</b>: Crew weight</li>
-    <li><b>Wpayload</b>: Payload weight</li>
-    <li><b>Wf</b>: Fuel weight</li>
-    <li><b>We</b>: Empty weight</li>
-</ul>
-    <h2>📘 Theory: Iterative Estimation of Takeoff Weight</h2>
+<h2>📘 Theory: Iterative Estimation of Takeoff Weight</h2>
 
 <p>
-The objective of this calculation is to determine the <b>design takeoff gross weight (W₀)</b> of the aerobatic aircraft.
-This weight represents the total aircraft weight at the beginning of the mission and is a key parameter in aircraft design.
+The objective is to determine the design takeoff gross weight (W₀) using an iterative approach. 
+Since W₀ appears on both sides of the governing equation, a direct solution is not possible.
 </p>
 
 <p>
-The governing relation for weight estimation is given by:
-</p>
-
-<p>
-$$
-W_0 = \frac{W_{crew} + W_{payload}}{1 - \left(\frac{W_f}{W_0}\right) - \left(\frac{W_e}{W_0}\right)}
-$$
-</p>
-
-<p>
-In this equation, the empty weight fraction (Wₑ/W₀) and fuel weight fraction (W_f/W₀) are not known exactly beforehand 
-and depend on the aircraft configuration. These values are initially estimated using historical data for similar aircraft.
-</p>
-
-<p>
-Since W₀ appears on both sides of the equation, a direct solution is not possible. Therefore, an <b>iterative method</b> is used.
-An initial guess of W₀ is assumed, and the equation is evaluated repeatedly until the difference between successive values 
-becomes sufficiently small.
-</p>
-
-<p>
-The aim of this process is to obtain a <b>converged value of W₀</b>, such that:
+An initial guess is assumed and refined iteratively until convergence is achieved.
 </p>
 
 <p>
@@ -111,20 +90,16 @@ $$
 $$
 </p>
 
-<p>
-For the present analysis, a typical aerobatic aircraft (similar to Sukhoi Su-26) is considered, and appropriate 
-weight fractions are assumed. The convergence behavior is monitored using absolute and percentage error.
-</p>
-    <h2>💻 Iterative Solution for Takeoff Weight</h2>
+<hr>
 
-<p>Iteration process for determining converged takeoff weight W₀.</p>
+<h2>💻 Iterative Solution</h2>
 
-<table border="1" cellpadding="8" cellspacing="0">
+<table>
     <thead>
         <tr>
             <th>Iteration</th>
-            <th>W₀ (old)</th>
-            <th>W₀ (new)</th>
+            <th>W<sub>0</sub> (old)</th>
+            <th>W<sub>0</sub> (new)</th>
             <th>Error</th>
             <th>% Error</th>
         </tr>
@@ -132,8 +107,10 @@ weight fractions are assumed. The convergence behavior is monitored using absolu
     <tbody id="resultTable"></tbody>
 </table>
 
+<p id="finalResult"></p>
+
 <script>
-let W0_old = 800; // initial guess
+let W0_old = 800;
 let tolerance = 0.001;
 let maxIter = 20;
 
@@ -144,9 +121,8 @@ let table = document.getElementById("resultTable");
 
 for (let i = 1; i <= maxIter; i++) {
 
-    // Make it realistic (depends on W0)
     let We_W0 = 0.6 + 0.02 * Math.log10(W0_old);
-    let Wf_W0 = 0.12;
+    let Wf_W0 = 0.1 + 0.02 * Math.exp(-W0_old / 1000);
 
     let W0_new = (Wcrew + Wpayload) / (1 - We_W0 - Wf_W0);
 
@@ -164,6 +140,8 @@ for (let i = 1; i <= maxIter; i++) {
     table.innerHTML += row;
 
     if (error < tolerance) {
+        document.getElementById("finalResult").innerHTML =
+            "<b>Converged W₀ = " + W0_new.toFixed(2) + " kg</b>";
         break;
     }
 
