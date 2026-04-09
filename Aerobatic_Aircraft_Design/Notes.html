@@ -73,6 +73,103 @@ $$
     <li><b>Wf</b>: Fuel weight</li>
     <li><b>We</b>: Empty weight</li>
 </ul>
+    <h2>📘 Theory: Iterative Estimation of Takeoff Weight</h2>
+
+<p>
+The objective of this calculation is to determine the <b>design takeoff gross weight (W₀)</b> of the aerobatic aircraft.
+This weight represents the total aircraft weight at the beginning of the mission and is a key parameter in aircraft design.
+</p>
+
+<p>
+The governing relation for weight estimation is given by:
+</p>
+
+<p>
+$$
+W_0 = \frac{W_{crew} + W_{payload}}{1 - \left(\frac{W_f}{W_0}\right) - \left(\frac{W_e}{W_0}\right)}
+$$
+</p>
+
+<p>
+In this equation, the empty weight fraction (Wₑ/W₀) and fuel weight fraction (W_f/W₀) are not known exactly beforehand 
+and depend on the aircraft configuration. These values are initially estimated using historical data for similar aircraft.
+</p>
+
+<p>
+Since W₀ appears on both sides of the equation, a direct solution is not possible. Therefore, an <b>iterative method</b> is used.
+An initial guess of W₀ is assumed, and the equation is evaluated repeatedly until the difference between successive values 
+becomes sufficiently small.
+</p>
+
+<p>
+The aim of this process is to obtain a <b>converged value of W₀</b>, such that:
+</p>
+
+<p>
+$$
+|W_0^{new} - W_0^{old}| < \text{tolerance}
+$$
+</p>
+
+<p>
+For the present analysis, a typical aerobatic aircraft (similar to Sukhoi Su-26) is considered, and appropriate 
+weight fractions are assumed. The convergence behavior is monitored using absolute and percentage error.
+</p>
+    <h2>💻 Iterative Solution for Takeoff Weight</h2>
+
+<p>Iteration process for determining converged takeoff weight W₀.</p>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Iteration</th>
+            <th>W₀ (old)</th>
+            <th>W₀ (new)</th>
+            <th>Error</th>
+            <th>% Error</th>
+        </tr>
+    </thead>
+    <tbody id="resultTable"></tbody>
+</table>
+
+<script>
+let W0_old = 800; // initial guess
+let tolerance = 0.001;
+let maxIter = 20;
+
+let Wcrew = 80;
+let Wpayload = 0;
+
+let table = document.getElementById("resultTable");
+
+for (let i = 1; i <= maxIter; i++) {
+
+    // Make it realistic (depends on W0)
+    let We_W0 = 0.6 + 0.02 * Math.log10(W0_old);
+    let Wf_W0 = 0.12;
+
+    let W0_new = (Wcrew + Wpayload) / (1 - We_W0 - Wf_W0);
+
+    let error = Math.abs(W0_new - W0_old);
+    let percent_error = (error / W0_new) * 100;
+
+    let row = `<tr>
+        <td>${i}</td>
+        <td>${W0_old.toFixed(2)}</td>
+        <td>${W0_new.toFixed(2)}</td>
+        <td>${error.toFixed(4)}</td>
+        <td>${percent_error.toFixed(2)}%</td>
+    </tr>`;
+
+    table.innerHTML += row;
+
+    if (error < tolerance) {
+        break;
+    }
+
+    W0_old = W0_new;
+}
+</script>
 
 </body>
 </html>
