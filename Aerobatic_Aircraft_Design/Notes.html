@@ -1,22 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Weight Estimation</title>
+    <meta charset="UTF-8">
+    <title>Aerobatic Aircraft Design - Weight Estimation</title>
+
+    <!-- MathJax for equations -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Simple styling (makes it look clean) -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        p {
+            font-size: 16px;
+        }
+    </style>
 </head>
-  
-    1. Although MTOW i.e. Maximum Take off Weight is the absolute upper limit of the weight the aeroba can sustain but it makes the aircraft heavier and reduces the maneuverability
-    thus worsening the overall perforamance. While design take off gross weight Wo is the maximum optimised weight at the start of the mission for which the aircraft is designed 
-    2. so our discussion is revolving around Wo and not MTOW.
+
 <body>
 
-<h2>Weight Estimation</h2>
+<h1>✈️ Aerobatic Aircraft Design</h1>
+
+<hr>
+
+<h2>⚖️ Weight Estimation</h2>
+
+<p>
+1. Although MTOW (Maximum Takeoff Weight) is the absolute upper limit of the weight the aircraft can sustain, 
+it increases aircraft weight and reduces maneuverability, thereby affecting performance.
+</p>
+
+<p>
+2. Therefore, the design is based on the design takeoff gross weight \( W_0 \), not MTOW.
+</p>
+
+<hr>
+
+<h2>📐 Design Equation</h2>
+
+<p>
+$$
+W_0 = W_{crew} + W_{payload} + \left(\frac{W_f}{W_0}\right)W_0 + \left(\frac{W_e}{W_0}\right)W_0
+$$
+</p>
+
+<p>
+$$
+W_0 - \left(\frac{W_f}{W_0}\right)W_0 - \left(\frac{W_e}{W_0}\right)W_0 = W_{crew} + W_{payload}
+$$
+</p>
 
 <p>
 $$
 W_0 = \frac{W_{crew} + W_{payload}}{1 - \left(\frac{W_f}{W_0}\right) - \left(\frac{W_e}{W_0}\right)}
 $$
 </p>
+
+<hr>
+
+<h2>📌 Definitions</h2>
+
+<ul>
+    <li><b>W₀</b>: Design takeoff gross weight</li>
+    <li><b>Wcrew</b>: Crew weight</li>
+    <li><b>Wpayload</b>: Payload weight</li>
+    <li><b>Wf</b>: Fuel weight</li>
+    <li><b>We</b>: Empty weight</li>
+</ul>
 
 </body>
 </html>
